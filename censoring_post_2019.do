@@ -51,8 +51,17 @@ br
 save "last_lineup_year", replace 
 
 *Load previous censoring file 
-import delimited "_archived/regions.csv", clear 
+import delimited "_archived/regions.csv", clear
+set obs 31 
+replace region_code="SSA" if region_code=="" 
+replace statistic="all" if statistic=="" 
+replace reporting_year =2020 in 30
+replace reporting_year=2021 in 31
+
 merge 1:1 region_code reporting_year using "last_lineup_year", keep(1) nogen
+
+br if region_code=="SSA"
+
 
 /*
 br if _merge==3
@@ -115,3 +124,35 @@ drop region_code _merge type country_name
 drop if reporting_year==.
 
 export delimited using "countries.csv", replace
+
+
+// Censor distributional statistics from the lineup estimates
+
+import delimited "countries.csv", clear 
+
+
+use "C:\Users\wb537472\OneDrive - WBG\Documents\Samuel_ETC_Research\Andres\PIP Update AM2023\PIP_20230626_2017_01_02_TEST_lineup20230831.dta", clear
+
+
+
+// Check if censoring is well done. 
+use "C:\Users\wb537472\OneDrive - WBG\Documents\Samuel_ETC_Research\Andres\PIP Update AM2023\PIP_20230626_2017_01_02_TEST_lineup20230831.dta", clear
+
+levelsof region_code, local(levels)
+foreach l of local levels {
+    display "`l'"
+ tab year if year>2018 & region_code=="`l'" & year!=2022
+ }
+
+
+use "C:\Users\wb537472\OneDrive - WBG\Documents\Samuel_ETC_Research\Andres\PIP Update AM2023\PIP_20230626_2017_01_02_TEST_aggregate20230831.dta", clear
+
+levelsof region_code, local(levels)
+foreach l of local levels {
+    display "`l'"
+ tab year if year>2018 & region_code=="`l'" & year!=2022
+ }
+
+
+ import delimited "region.cvs", clear 
+
