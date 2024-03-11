@@ -9,4 +9,4 @@ import delimited "aux_censoring.git/countries.csv", clear
 keep if reporting_year>=2019 
 drop if reporting_year>2019
 
-export delimited  "aux_censoring.git/regions_202403.csv", replace 
+export delimited  "aux_censoring.git/countries.csv", replace 
