@@ -1,5 +1,5 @@
 
-cd "C:\Users\wb537472\OneDrive - WBG\Documents\Projects\PIP Update\May 2024"
+cd "C:\Users\wb537472\OneDrive - WBG\Documents\Projects\PIP Update\June 2024"
 
 
 // Load latest coverage data 
@@ -12,7 +12,11 @@ sort region_code year
 
 
 // Censor cases without coverage
-keep if COV<50 | ((COV<50 | COV_LMIC < 50 ) & region_code=="WLD")
+keep if COV<50 | ((COV<50 | COV_LMIC < 50 ) & region_code=="WLD") 
+
+
+
+
 drop if year<1981
 keep region_code year 
 rename year reporting_year
@@ -22,13 +26,14 @@ save `new'
 
 
 // Load original censoring file
-import delimited "aux_censoring/regions.csv", clear 
+import delimited "aux_censoring.git/regions.csv", clear 
 
 // Merge with new consoring data
 merge 1:1 region_code reporting_year using `new'
 drop if _merge==1
 
+drop if inrange(reporting_year,2019,2024)
 replace statistic = "all" if statistic==""
 drop _merge 
 
-export delimited  "aux_censoring/regions.csv", replace 
+export delimited  "aux_censoring.git/regions.csv", replace 
